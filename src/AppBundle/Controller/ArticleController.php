@@ -131,6 +131,6 @@ class ArticleController extends Controller
             ->setAction($this->generateUrl('admin_article_delete', array('id' => $article->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
 }

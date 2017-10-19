@@ -6,6 +6,7 @@ use AppBundle\AppBundle;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 class DefaultController extends Controller
 {
@@ -15,9 +16,10 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
         $articles = $em->getRepository('AppBundle:Article')->findAll();
         $sections = $em->getRepository('AppBundle:Section')->findAll();
-        // replace this example code with whatever you need
+
         return $this->render('default/index.html.twig', array(
             'articles' => $articles,
             'sections' => $sections

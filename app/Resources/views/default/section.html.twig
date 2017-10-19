@@ -5,9 +5,8 @@
         <a href="{{ path("sections",{ 'id': s.id }) }}">{{ s.thetitle }}</a> -
     {% endfor %}<hr/>
 {% endblock %}
-
 {% block body %}
-    <h1>accueil</h1>
+    <h1>{{ titre }}</h1>
     {% for a in articles %}
         <hr/>
         <h2>{{ a.thetitle }}</h2>
@@ -22,3 +21,4 @@
         <p>{{ a.thedate|date("Y-m-d H:i:s") }} par {{ a.util.login }}</p>
     {% endfor %}
 {% endblock %}
+

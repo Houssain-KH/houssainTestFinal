@@ -29,6 +29,19 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path("fos_user_profile_show") }}">Espace Perso</a>
                 </li>
+
+                {% if is_granted('ROLE_USER') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path("admin_article_index") }}">Admin Articles</a>
+                    </li>
+                {% endif %}
+                {# SI on est SUPER admin#}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path("admin_section_index") }}">Admin Sections</a>
+                    </li>
+                {% endif %}
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path("fos_user_security_logout") }}">Déconnexion</a>
                 </li>
@@ -50,13 +63,10 @@
 </nav>
 <div class="jumbotron">
     <div class="container">
-        {% block menu %}
-            {% for i in sections %}
-        <a href="{{ path("sections",{'id':i.id})}}"> {{ i.theTitle }} </a>
-            {% endfor %}
-        {% endblock %}
+        {% block menu %}{% endblock %}
         {% block body %}{% endblock %}
-    </div></div>
+    </div>
+</div>
 {% block javascripts %}
     <!-- Bootstrap core JavaScript
    ================================================== -->
