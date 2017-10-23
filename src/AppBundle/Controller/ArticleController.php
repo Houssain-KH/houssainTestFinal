@@ -5,7 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Article controller.
@@ -40,15 +41,27 @@ class ArticleController extends Controller
     public function newAction(Request $request)
     {
         $article = new Article();
-        $form = $this->createForm('AppBundle\Form\ArticleType', $article);
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            $form = $this->createForm('AppBundle\Form\ArticleType', $article);
+        else
+            $form = $this->createForm('AppBundle\Form\ArticleUserType', $article);
+
+
         $form->handleRequest($request);
+
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            {
+                $user = $em->getRepository('AppBundle:FosUser')->find($this->getUser()->getId());
+                $article->setFosUser($user);
+            }
             $em->persist($article);
             $em->flush();
 
-            return $this->redirectToRoute('admin_article_show', array('id' => $article->getId()));
+            return $this->redirectToRoute('admin_article_index');
         }
 
         return $this->render('article/new.html.twig', array(
@@ -81,14 +94,31 @@ class ArticleController extends Controller
      */
     public function editAction(Request $request, Article $article)
     {
+        $idUser = $this->getUser()->getId();
+        $idArticleOwner = $article->getFosUser()->getId();
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+        {
+            if ($idArticleOwner != $idUser)
+            {
+                $this->addFlash("error", "Impossible de modifier un article qui ne vous appartient pas!");
+                return $this->redirectToRoute('admin_article_index');
+            }
+
+        }
+
         $deleteForm = $this->createDeleteForm($article);
-        $editForm = $this->createForm('AppBundle\Form\ArticleType', $article);
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+            $editForm = $this->createForm('AppBundle\Form\ArticleType', $article);
+        else
+            $editForm = $this->createForm('AppBundle\Form\ArticleUserType', $article);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('admin_article_edit', array('id' => $article->getId()));
+            return $this->redirectToRoute('admin_article_index');
         }
 
         return $this->render('article/edit.html.twig', array(
@@ -104,16 +134,26 @@ class ArticleController extends Controller
      * @Route("/{id}", name="admin_article_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, Article $article)
+    public function deleteAction(Request $request, Article $article, $id)
     {
-        $form = $this->createDeleteForm($article);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($article);
-            $em->flush();
+
+        $idUser = $this->getUser()->getId();
+        $idArticleOwner = $article->getFosUser()->getId();
+
+
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+        {
+            if ($idArticleOwner != $idUser) {
+                $this->addFlash("error", "Impossible de supprimer un article qui ne vous appartient pas!");
+                return $this->redirectToRoute('admin_article_index');
+            }
         }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($article, $id);
+        $em->flush();
+
 
         return $this->redirectToRoute('admin_article_index');
     }
