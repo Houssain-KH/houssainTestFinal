@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Articles list</h1>
+    <h1>Listes des articles</h1>
 
     <table>
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Thetitle</th>
-                <th>Thetext</th>
-                <th>Thedate</th>
+                <th>Le titre</th>
+                <th>Le texte</th>
+                <th>La date</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,10 +23,10 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('admin_article_show', { 'id': article.id }) }}">show</a>
+                            <a href="{{ path('admin_article_show', { 'id': article.id }) }}">voir</a>
                         </li>
                         <li>
-                            <a href="{{ path('admin_article_edit', { 'id': article.id }) }}">edit</a>
+                            <a href="{{ path('admin_article_edit', { 'id': article.id }) }}">modifier</a>
                         </li>
                     </ul>
                 </td>
@@ -37,7 +37,7 @@
 
     <ul>
         <li>
-            <a href="{{ path('admin_article_new') }}">Create a new article</a>
+            <a href="{{ path('admin_article_new') }}">Creér un nouvel article</a>
         </li>
     </ul>
 {% endblock %}

@@ -56,7 +56,7 @@ class Article
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Section")
-     * @ORM\JoinTable(name="article_has_section",
+     * @ORM\JoinTable(name="section_has_article",
      *   joinColumns={
      *     @ORM\JoinColumn(name="article_id", referencedColumnName="id")
      *   },
@@ -70,16 +70,17 @@ class Article
     /**
      * Constructor
      */
+
+    public function __toString()
+    {
+        return $this->thetitle;
+    }
     public function __construct()
     {
         $this->thedate = new \DateTime();
         $this->section = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    public function __toString()
-    {
-        return $this->thetitle;
-    }
 
     /**
      * Get id

@@ -98,9 +98,6 @@ class FosUser
      */
     private $roles;
 
-    /*
-     * On remet le tostring effacé par la regénération d'entité
-     */
     public function __toString()
     {
         return $this->username;
